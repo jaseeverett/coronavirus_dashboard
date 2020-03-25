@@ -277,10 +277,11 @@ daily_confirmed %>%
 ```{r daily_summary}
 df_EU <- coronavirus %>%
   # dplyr::filter(date == max(date)) %>%
-  dplyr::filter(Country.Region == "Belgium" |
-    Country.Region == "France" |
+  dplyr::filter(Country.Region == "Australia" |
+    Country.Region == "New Zealand" |
     Country.Region == "Italy" |
-    Country.Region == "Spain") %>%
+    Country.Region == "US" | 
+    Country.Region == "China") %>%
   dplyr::group_by(Country.Region, type) %>%
   dplyr::summarise(total = sum(cases)) %>%
   tidyr::pivot_wider(
