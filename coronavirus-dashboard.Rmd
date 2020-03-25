@@ -150,7 +150,7 @@ plotly::plot_ly(data = df_daily) %>%
     marker = list(color = death_color)
   ) %>%
   plotly::add_annotations(
-    x = as.Date("2020-02-04"),
+    x = as.Date(df_daily$date[df_daily$confirmed>0][1]),
     y = 1,
     text = paste("First case"),
     xref = "x",
@@ -163,7 +163,7 @@ plotly::plot_ly(data = df_daily) %>%
     ay = -90
   ) %>%
   plotly::add_annotations(
-    x = as.Date("2020-03-11"),
+    x = as.Date(df_daily$date[df_daily$death>0][1]),
     y = 3,
     text = paste("First death"),
     xref = "x",
@@ -175,40 +175,40 @@ plotly::plot_ly(data = df_daily) %>%
     ax = -20,
     ay = -90
   ) %>%
-  plotly::add_annotations(
-    x = as.Date("2020-03-23"),
-    y = 100,
-    text = paste(
-      "New containment",
-      "<br>",
-      "measures"
-    ),
-    xref = "x",
-    yref = "y",
-    arrowhead = 5,
-    arrowhead = 3,
-    arrowsize = 1,
-    showarrow = TRUE,
-    ax = -30,
-    ay = -90
-  ) %>%
-  plotly::add_annotations(
-    x = as.Date("2020-03-25"),
-    y = 120,
-    text = paste(
-      "Stricter containment",
-      "<br>",
-      "measures"
-    ),
-    xref = "x",
-    yref = "y",
-    arrowhead = 5,
-    arrowhead = 3,
-    arrowsize = 1,
-    showarrow = TRUE,
-    ax = 10,
-    ay = -180
-  ) %>%
+  # plotly::add_annotations(
+  #   x = as.Date("2020-03-23"),
+  #   y = 100,
+  #   text = paste(
+  #     "New containment",
+  #     "<br>",
+  #     "measures"
+  #   ),
+  #   xref = "x",
+  #   yref = "y",
+  #   arrowhead = 5,
+  #   arrowhead = 3,
+  #   arrowsize = 1,
+  #   showarrow = TRUE,
+  #   ax = -30,
+  #   ay = -90
+  # ) %>%
+  # plotly::add_annotations(
+  #   x = as.Date("2020-03-25"),
+  #   y = 10,
+  #   text = paste(
+  #     "Stricter containment",
+  #     "<br>",
+  #     "measures"
+  #   ),
+  #   xref = "x",
+  #   yref = "y",
+  #   arrowhead = 5,
+  #   arrowhead = 3,
+  #   arrowsize = 1,
+  #   showarrow = TRUE,
+  #   ax = 10,
+  #   ay = -180
+  # ) %>%
   plotly::layout(
     title = "",
     yaxis = list(title = "Cumulative number of cases"),
