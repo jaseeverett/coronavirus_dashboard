@@ -12,15 +12,148 @@ output:
 ```{r setup, include=FALSE}
 #------------------ Packages ------------------
 library(flexdashboard)
+library(tidyverse)
 # install.packages("devtools")
 # devtools::install_github("RamiKrispin/coronavirus", force = TRUE)
 library(coronavirus)
-data(coronavirus)
+# data(coronavirus)
 # update_datasets()
 # View(coronavirus)
 # max(coronavirus$date)
 
-`%>%` <- magrittr::`%>%`
+#----------------------------------------------------
+# Pulling the coronvirus data from John Hopkins repo
+# https://github.com/CSSEGISandData/COVID-19
+#----------------------------------------------------
+# Setting functions
+# `%>%` <- magrittr::`%>%`
+#----------------------------------------------------
+#------------ Pulling confirmed cases------------
+conf_url <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv"
+raw_conf <- read.csv(file = conf_url,
+                     stringsAsFactors = FALSE)
+
+lapply(1:ncol(raw_conf), function(i){
+  if(all(is.na(raw_conf[, i]))){
+    raw_conf <<- raw_conf[, -i]
+    return(print(paste("Column", names(raw_conf)[i], "is missing", sep = " ")))
+  } else {
+    return(NULL)
+  }
+})
+
+# Transforming the data from wide to long
+# Creating new data frame
+df_conf <- raw_conf[, 1:4]
+
+for(i in 5:ncol(raw_conf)){
+  
+  raw_conf[,i] <- as.integer(raw_conf[,i])
+  # raw_conf[,i] <- ifelse(is.na(raw_conf[, i]), 0 , raw_conf[, i])
+  print(names(raw_conf)[i])
+  
+  if(i == 5){
+    df_conf[[names(raw_conf)[i]]] <- raw_conf[, i]
+  } else {
+    df_conf[[names(raw_conf)[i]]] <- raw_conf[, i] - raw_conf[, i - 1]
+  }
+  
+  
+}
+
+
+df_conf1 <- df_conf %>% 
+  tidyr::pivot_longer(cols = dplyr::starts_with("X"),
+                      names_to = "date_temp",
+                      values_to = "cases_temp")
+
+# Parsing the date
+df_conf1$month <- sub("X", "",
+                      strsplit(df_conf1$date_temp, split = "\\.") %>%
+                        purrr::map_chr(~.x[1]) )
+
+df_conf1$day <- strsplit(df_conf1$date_temp, split = "\\.") %>%
+  purrr::map_chr(~.x[2])
+
+
+df_conf1$date <- as.Date(paste("2020", df_conf1$month, df_conf1$day, sep = "-"))
+
+# Aggregate the data to daily
+df_conf2 <- df_conf1 %>%
+  dplyr::group_by(Province.State, Country.Region, Lat, Long, date) %>%
+  dplyr::summarise(cases = sum(cases_temp)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(type = "confirmed",
+                Country.Region = trimws(Country.Region),
+                Province.State = trimws(Province.State))
+
+head(df_conf2)
+tail(df_conf2)
+#----------------------------------------------------
+# Pulling death cases
+
+death_url <- "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv"
+raw_death <- read.csv(file =death_url,
+                      stringsAsFactors = FALSE,
+                      fill =FALSE)
+
+lapply(1:ncol(raw_death), function(i){
+  if(all(is.na(raw_death[, i]))){
+    raw_death <<- raw_death[, -i]
+    return(print(paste("Column", names(raw_death)[i], "is missing", sep = " ")))
+  } else {
+    return(NULL)
+  }
+})
+
+# Transforming the data from wide to long
+# Creating new data frame
+df_death <- raw_death[, 1:4]
+
+for(i in 5:ncol(raw_death)){
+  print(i)
+  raw_death[,i] <- as.integer(raw_death[,i])
+  raw_death[,i] <- ifelse(is.na(raw_death[, i]), 0 , raw_death[, i])
+  
+  if(i == 5){
+    df_death[[names(raw_death)[i]]] <- raw_death[, i]
+  } else {
+    df_death[[names(raw_death)[i]]] <- raw_death[, i] - raw_death[, i - 1]
+  }
+}
+
+
+df_death1 <-  df_death %>% tidyr::pivot_longer(cols = dplyr::starts_with("X"),
+                                               names_to = "date_temp",
+                                               values_to = "cases_temp")
+
+# Parsing the date
+df_death1$month <- sub("X", "",
+                       strsplit(df_death1$date_temp, split = "\\.") %>%
+                         purrr::map_chr(~.x[1]) )
+
+df_death1$day <- strsplit(df_death1$date_temp, split = "\\.") %>%
+  purrr::map_chr(~.x[2])
+
+
+df_death1$date <- as.Date(paste("2020", df_death1$month, df_death1$day, sep = "-"))
+
+# Aggregate the data to daily
+df_death2 <- df_death1 %>%
+  dplyr::group_by(Province.State, Country.Region, Lat, Long, date) %>%
+  dplyr::summarise(cases = sum(cases_temp)) %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(type = "death",
+                Country.Region = trimws(Country.Region),
+                Province.State = trimws(Province.State))
+
+#---------------- Aggregate all cases ----------------
+
+#
+coronavirus <- dplyr::bind_rows(df_conf2, df_death2) %>%
+  as.data.frame()
+
+
 #------------------ Parameters ------------------
 # Set colors
 # https://www.w3.org/TR/css-color-3/#svg-color
@@ -111,9 +244,9 @@ valueBox(
 
 valueBox(
   value = paste(format(sum(df$death, na.rm = TRUE), big.mark = ","), " (",
-    round(100 * sum(df$death, na.rm = TRUE) / sum(df$confirmed), 1),
-    "%)",
-    sep = ""
+                round(100 * sum(df$death, na.rm = TRUE) / sum(df$confirmed), 1),
+                "%)",
+                sep = ""
   ),
   caption = "Death cases (death rate)",
   icon = "fas fa-heart-broken",
@@ -126,7 +259,7 @@ Row
 -----------------------------------------------------------------------
 
 ### **Daily cumulative cases by type** (Australia only)
-    
+
 ```{r}
 plotly::plot_ly(data = df_daily) %>%
   plotly::add_trace(
@@ -186,36 +319,36 @@ plotly::plot_ly(data = df_daily) %>%
   #   xref = "x",
   #   yref = "y",
   #   arrowhead = 5,
-  #   arrowhead = 3,
-  #   arrowsize = 1,
-  #   showarrow = TRUE,
-  #   ax = -30,
-  #   ay = -90
-  # ) %>%
-  # plotly::add_annotations(
-  #   x = as.Date("2020-03-25"),
-  #   y = 10,
-  #   text = paste(
-  #     "Stricter containment",
-  #     "<br>",
-  #     "measures"
-  #   ),
-  #   xref = "x",
-  #   yref = "y",
-  #   arrowhead = 5,
-  #   arrowhead = 3,
-  #   arrowsize = 1,
-  #   showarrow = TRUE,
-  #   ax = 10,
-  #   ay = -180
-  # ) %>%
-  plotly::layout(
-    title = "",
-    yaxis = list(title = "Cumulative number of cases"),
-    xaxis = list(title = "Date"),
-    legend = list(x = 0.1, y = 0.9),
-    hovermode = "compare"
-  )
+#   arrowhead = 3,
+#   arrowsize = 1,
+#   showarrow = TRUE,
+#   ax = -30,
+#   ay = -90
+# ) %>%
+# plotly::add_annotations(
+#   x = as.Date("2020-03-25"),
+#   y = 10,
+#   text = paste(
+#     "Stricter containment",
+#     "<br>",
+#     "measures"
+#   ),
+#   xref = "x",
+#   yref = "y",
+#   arrowhead = 5,
+#   arrowhead = 3,
+#   arrowsize = 1,
+#   showarrow = TRUE,
+#   ax = 10,
+#   ay = -180
+# ) %>%
+plotly::layout(
+  title = "",
+  yaxis = list(title = "Cumulative number of cases"),
+  xaxis = list(title = "Date"),
+  legend = list(x = 0.1, y = 0.9),
+  hovermode = "compare"
+)
 ```
 
 Comparison
@@ -227,7 +360,7 @@ Column {data-width=400}
 
 
 ### **Daily new cases**
-    
+
 ```{r}
 daily_confirmed <- coronavirus %>%
   dplyr::filter(type == "confirmed") %>%
@@ -235,10 +368,10 @@ daily_confirmed <- coronavirus %>%
   dplyr::mutate(country = Country.Region) %>%
   dplyr::mutate(country = dplyr::if_else(country == "New Zealand", "NewZealand", country)) %>%
   dplyr::filter(Country.Region == "Australia" |
-    Country.Region == "New Zealand" |
-    Country.Region == "China" |
-    Country.Region == "US" | 
-    Country.Region == "Italy") %>%
+                  Country.Region == "New Zealand" |
+                  Country.Region == "China" |
+                  Country.Region == "US" | 
+                  Country.Region == "Italy") %>%
   dplyr::group_by(date, country) %>%
   dplyr::summarise(total = sum(cases)) %>%
   dplyr::ungroup() %>%
@@ -302,17 +435,17 @@ daily_confirmed %>%
     )
   )
 ```
- 
+
 ### **Cases distribution by type**
 
 ```{r daily_summary}
 df_region <- coronavirus %>%
   # dplyr::filter(date == max(date)) %>%
   dplyr::filter(Country.Region == "Australia" |
-    Country.Region == "New Zealand" |
-    Country.Region == "China" |
-    Country.Region == "US" | 
-    Country.Region == "Italy") %>%
+                  Country.Region == "New Zealand" |
+                  Country.Region == "China" |
+                  Country.Region == "US" | 
+                  Country.Region == "Italy") %>%
   dplyr::group_by(Country.Region, type) %>%
   dplyr::summarise(total = sum(cases)) %>%
   tidyr::pivot_wider(
@@ -395,9 +528,9 @@ names(cv_data_for_plot.split) %>%
         fillOpacity = 0.8,
         radius = ~log_cases,
         popup = leafpop::popupTable(cv_data_for_plot.split[[df]],
-          feature.id = FALSE,
-          row.numbers = FALSE,
-          zcol = c("type", "cases", "Country.Region", "Province.State")
+                                    feature.id = FALSE,
+                                    row.numbers = FALSE,
+                                    zcol = c("type", "cases", "Country.Region", "Province.State")
         ),
         group = df,
         #                 clusterOptions = markerClusterOptions(removeOutsideVisibleBounds = F),
