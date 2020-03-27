@@ -556,11 +556,11 @@ About
 
 **The Coronavirus Dashboard: the case of Australia**
 
-This Coronavirus dashboard: the case of Australia provides an overview of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic for m. This dashboard is built with R using the R Makrdown framework and was adapted from this [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/){target="_blank"} by Rami Krispin.
+This Coronavirus dashboard: the case of Australia provides an overview of the 2019 Novel Coronavirus COVID-19 (2019-nCoV) epidemic for m. This dashboard is built with R using the R Makrdown framework and was adapted from this [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/){target="_blank"} by Rami Krispin and this [dashboard](https://www.antoinesoetewey.com/files/coronavirus-dashboard.html){target="_blank"} by Antoine Soetewey.
 
 **Code**
 
-The code behind this dashboard is available on [GitHub](https://github.com/AntoineSoetewey/coronavirus_dashboard){target="_blank"}.
+The code behind my dashboard is available on [GitHub](https://github.com/jaseeverett/coronavirus_dashboard){target="_blank"}.
 
 **Data**
 
@@ -575,9 +575,9 @@ The data and dashboard are refreshed on a daily basis.
 
 The raw data is pulled from the Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE) Coronavirus [repository](https://github.com/RamiKrispin/coronavirus-csv){target="_blank"}.
 
-**Contact**
+**Acknowledgement**
 
-For any question or feedback, you can [contact me](https://www.statsandr.com/contact/). More information about this dashboard can be found in this [article](https://www.statsandr.com/blog/how-to-create-a-simple-coronavirus-dashboard-specific-to-your-country-in-r/).
+This dashboard was created using the template provided by Antoine Soetewey. More information about Antoine's dashboard can be found in this [article](https://www.statsandr.com/blog/how-to-create-a-simple-coronavirus-dashboard-specific-to-your-country-in-r/).
 
 **Update**
 
