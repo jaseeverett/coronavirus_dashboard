@@ -147,11 +147,9 @@ df_death2 <- df_death1 %>%
                 Province.State = trimws(Province.State))
 
 #---------------- Aggregate all cases ----------------
-
 #
 coronavirus <- dplyr::bind_rows(df_conf2, df_death2) %>%
   as.data.frame()
-
 
 #------------------ Parameters ------------------
 # Set colors
@@ -307,40 +305,36 @@ plotly::plot_ly(data = df_daily) %>%
     ax = -20,
     ay = -90
   ) %>%
-  # plotly::add_annotations(
-  #   x = as.Date("2020-03-23"),
-  #   y = 100,
-  #   text = paste(
-  #     "New containment",
-  #     "<br>",
-  #     "measures"
-  #   ),
-  #   xref = "x",
-  #   yref = "y",
-  #   arrowhead = 5,
-#   arrowhead = 3,
-#   arrowsize = 1,
-#   showarrow = TRUE,
-#   ax = -30,
-#   ay = -90
-# ) %>%
-# plotly::add_annotations(
-#   x = as.Date("2020-03-25"),
-#   y = 10,
-#   text = paste(
-#     "Stricter containment",
-#     "<br>",
-#     "measures"
-#   ),
-#   xref = "x",
-#   yref = "y",
-#   arrowhead = 5,
-#   arrowhead = 3,
-#   arrowsize = 1,
-#   showarrow = TRUE,
-#   ax = 10,
-#   ay = -180
-# ) %>%
+plotly::add_annotations(
+  x = as.Date("2020-03-22"),
+  y = 1682,
+  text = paste(
+    "Level 1 containment measures  "
+  ),
+  xref = "x",
+  yref = "y",
+  arrowhead = 5,
+  arrowhead = 3,
+  arrowsize = 1,
+  showarrow = TRUE,
+  ax = -150,
+  ay = 0
+) %>%
+plotly::add_annotations(
+  x = as.Date("2020-03-24"),
+  y = 2364,
+  text = paste(
+    "Level 2 containment measures  "
+  ),
+  xref = "x",
+  yref = "y",
+  arrowhead = 5,
+  arrowhead = 3,
+  arrowsize = 1,
+  showarrow = TRUE,
+  ax = -150,
+  ay = 0
+) %>%
 plotly::layout(
   title = "",
   yaxis = list(title = "Cumulative number of cases"),
