@@ -305,6 +305,21 @@ plotly::plot_ly(data = df_daily) %>%
     ax = -20,
     ay = -90
   ) %>%
+  plotly::add_annotations(
+  x = as.Date("2020-03-18"),
+  y = 681,
+  text = paste(
+    "Ruby Princess docks in Sydney  "
+  ),
+  xref = "x",
+  yref = "y",
+  arrowhead = 5,
+  arrowhead = 3,
+  arrowsize = 1,
+  showarrow = TRUE,
+  ax = -150,
+  ay = 0
+) %>%
 plotly::add_annotations(
   x = as.Date("2020-03-22"),
   y = 1682,

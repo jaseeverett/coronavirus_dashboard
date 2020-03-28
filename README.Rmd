@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 ```
 
 **Acknowledgement**
-Many thanks to Antoine Soetewey for the code. You can see his website [here] (https://www.statsandr.com/blog/how-to-create-a-simple-coronavirus-dashboard-specific-to-your-country-in-r/)
+Many thanks to Antoine Soetewey for the code. You can see his website [here](https://www.statsandr.com/blog/how-to-create-a-simple-coronavirus-dashboard-specific-to-your-country-in-r/)
 
 **The Coronavirus Dashboard: the case of Australia**
 
@@ -32,5 +32,5 @@ More information about this dashboard can be found in this [article](https://www
 
 **Update**
 
-The dashboard has been updated on `r format(Sys.time(), "%A %B %d, %Y")`.
+The dashboard has been updated on `r format(Sys.time() - (11*3600), "%A %B %d, %Y")` (UTC).
 
