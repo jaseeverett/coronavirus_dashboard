@@ -377,9 +377,11 @@ daily_confirmed <- coronavirus %>%
   dplyr::mutate(country = dplyr::if_else(country == "New Zealand", "NewZealand", country)) %>%
   dplyr::filter(Country.Region == "Australia" |
                   Country.Region == "New Zealand" |
-                  Country.Region == "China" |
-                  Country.Region == "US" | 
-                  Country.Region == "Italy") %>%
+                  Country.Region == "China" 
+                # |
+                  # Country.Region == "US" | 
+                  # Country.Region == "Italy"
+                ) %>%
   dplyr::group_by(date, country) %>%
   dplyr::summarise(total = sum(cases)) %>%
   dplyr::ungroup() %>%
@@ -411,20 +413,20 @@ daily_confirmed %>%
     mode = "lines+markers",
     name = "China"
   ) %>%
-  plotly::add_trace(
-    x = ~date,
-    y = ~US,
-    type = "scatter",
-    mode = "lines+markers",
-    name = "US"
-  ) %>%
-  plotly::add_trace(
-    x = ~date,
-    y = ~Italy,
-    type = "scatter",
-    mode = "lines+markers",
-    name = "Italy"
-  ) %>%
+  # plotly::add_trace(
+  #   x = ~date,
+  #   y = ~US,
+  #   type = "scatter",
+  #   mode = "lines+markers",
+  #   name = "US"
+  # ) %>%
+  # plotly::add_trace(
+  #   x = ~date,
+  #   y = ~Italy,
+  #   type = "scatter",
+  #   mode = "lines+markers",
+  #   name = "Italy"
+  # ) %>%
   plotly::layout(
     title = "",
     legend = list(x = 0.1, y = 0.9),
@@ -451,9 +453,10 @@ df_region <- coronavirus %>%
   # dplyr::filter(date == max(date)) %>%
   dplyr::filter(Country.Region == "Australia" |
                   Country.Region == "New Zealand" |
-                  Country.Region == "China" |
-                  Country.Region == "US" | 
-                  Country.Region == "Italy") %>%
+                  Country.Region == "China" #|
+                  # Country.Region == "US" | 
+                  # Country.Region == "Italy"
+                ) %>%
   dplyr::group_by(Country.Region, type) %>%
   dplyr::summarise(total = sum(cases)) %>%
   tidyr::pivot_wider(
