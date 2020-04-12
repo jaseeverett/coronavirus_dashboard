@@ -302,8 +302,8 @@ plotly::plot_ly(data = df_daily) %>%
     arrowhead = 3,
     arrowsize = 1,
     showarrow = TRUE,
-    ax = -40,
-    ay = -90
+    ax = -50,
+    ay = -50
   ) %>%
   plotly::add_annotations(
   x = as.Date("2020-03-18"),
@@ -317,7 +317,7 @@ plotly::plot_ly(data = df_daily) %>%
   arrowhead = 3,
   arrowsize = 1,
   showarrow = TRUE,
-  ax = -150,
+  ax = -80,
   ay = 0
 ) %>%
 plotly::add_annotations(
